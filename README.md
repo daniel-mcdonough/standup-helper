@@ -1,8 +1,8 @@
-# Standup Automation
+# standup-automation
 
-Personal automation tool that aggregates work data from multiple sources (Git, Jira, notes, time tracking) and generates AI-powered summaries for standup meetings.
+Aggregates my work data from Git, Jira, notes, etc. and generates a standup summary using Vertex AI.
 
-Built this because I was tired of manually collecting what I worked on each day.
+Built this because I got tired of manually collecting what I worked on every morning.
 
 ## What it does
 
@@ -16,21 +16,29 @@ Saves me about 5-10 minutes every morning.
 
 ## Setup
 
-You'll need Python 3.8+ and Google Cloud credentials for Vertex AI.
+You'll need Python 3.8+ and a Google Cloud account with Vertex AI enabled.
 
 ```bash
-# Install stuff
-make install-dev
+# Clone and install
+git clone https://github.com/yourusername/standup-automation.git
+cd standup-automation
+pip install -r requirements.txt
 
-# Copy config templates  
+# Set up config files
 cp config.example.ini config.ini
 cp secrets/secrets.example.env secrets/secrets.env
 
-# Edit the config files with your settings
-# Check SECURITY.md for the credential setup details
+# Edit both files with your settings:
+# - config.ini: project ID, file paths, etc.
+# - secrets.env: Jira credentials, API keys
 
-# Auth with Google Cloud
+# Authenticate with Google Cloud
 gcloud auth application-default login
+```
+
+If you need the dev dependencies (linting, formatting):
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ## Running it
@@ -110,7 +118,7 @@ It pulls from:
 ```bash
 make format    # Format code with black/isort
 make lint      # Run flake8, mypy
-make test      # Run tests (when I add them)
+make test      # Run tests (TODO)
 ```
 
-The code is typed and formatted, because why make life harder.
+The code is typed and uses black/isort because I like consistency.
