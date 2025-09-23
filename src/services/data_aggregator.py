@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Tuple
 
 from ..clients.jira_client import JiraClient
 from ..clients.github_client import GitHubClient
+from ..clients.context_switcher_client import ContextSwitcherClient
 from .data_preprocessor import DataPreprocessor
 
 
@@ -15,15 +16,18 @@ class DataAggregator:
     """Service for aggregating data from multiple sources."""
     
     def __init__(self, jira_client: Optional[JiraClient] = None, 
-                 github_client: Optional[GitHubClient] = None):
+                 github_client: Optional[GitHubClient] = None,
+                 context_switcher_client: Optional[ContextSwitcherClient] = None):
         """Initialize data aggregator.
         
         Args:
             jira_client: Optional Jira client instance
             github_client: Optional GitHub client instance
+            context_switcher_client: Optional Context Switcher client instance
         """
         self.jira_client = jira_client
         self.github_client = github_client
+        self.context_switcher_client = context_switcher_client
         self.preprocessor = DataPreprocessor()
     
     def get_notes_content(self, notes_directory: Path) -> str:
@@ -168,6 +172,28 @@ class DataAggregator:
         except Exception as e:
             return f"Error fetching GitHub events: {e}"
     
+    def get_context_switcher_data(self, days_back: int = 2) -> str:
+        """Get context switcher productivity metrics.
+        
+        Args:
+            days_back: Number of days to look back for data
+            
+        Returns:
+            Formatted context switcher data string
+        """
+        if not self.context_switcher_client:
+            return "Context switcher client not configured."
+        
+        try:
+            # Test connection first
+            if not self.context_switcher_client.test_connection():
+                return "Context switcher service not available (check if running on port 5000)."
+            
+            # Get productivity metrics
+            return self.context_switcher_client.get_productivity_metrics()
+        except Exception as e:
+            return f"Error fetching context switcher data: {e}"
+    
     def get_date_range(self) -> Tuple[datetime, datetime]:
         """Get the date range for data collection (previous workday to today).
         
@@ -187,7 +213,8 @@ class DataAggregator:
         git_author: str,
         git_directories: List[str],
         github_username: Optional[str] = None,
-        github_org: Optional[str] = None
+        github_org: Optional[str] = None,
+        context_switcher_days_back: int = 2
     ) -> str:
         """Aggregate all available data sources.
         

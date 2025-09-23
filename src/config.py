@@ -159,6 +159,21 @@ class Config:
         """Vertex AI model name."""
         return self._config.get("vertex", "MODEL")
     
+    @property
+    def context_switcher_enabled(self) -> bool:
+        """Whether context switcher integration is enabled."""
+        return self._config.getboolean("context_switcher", "ENABLED", fallback=False)
+    
+    @property
+    def context_switcher_url(self) -> str:
+        """Context switcher API URL."""
+        return self._config.get("context_switcher", "URL", fallback="http://127.0.0.1:5000")
+    
+    @property
+    def context_switcher_days_back(self) -> int:
+        """Number of days to look back for context switching data."""
+        return self._config.getint("context_switcher", "DAYS_BACK", fallback=2)
+    
     def get(self, section: str, key: str, fallback: str = None) -> str:
         """Get a configuration value.
         
